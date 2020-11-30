@@ -1,5 +1,5 @@
 # coding=gbk
-import torchsnooper
+# import torchsnooper
 from torch import nn
 
 from InputEmbeddings import InputEmbeddings

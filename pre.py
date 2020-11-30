@@ -12,7 +12,7 @@ def binary_acc(preds, y):
     acc = correct.sum() / len(correct)
     return acc
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = AttfoldModel.MyTransformerModel(30,100, p_drop=0.5, h=2, output_size=1)
+model = AttfoldModel.MyTransformerModel(30,30, p_drop=0.5, h=2, output_size=1)
 model.load_state_dict(torch.load("wordavg-model1.pt"))
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=0.001)
 criteon = torch.nn.BCEWithLogitsLoss()

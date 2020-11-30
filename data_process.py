@@ -15,7 +15,7 @@ from sklearn.model_selection import train_test_split
 from torchtext.vocab import Vectors
 
 SEED = 126
-BATCH_SIZE = 4096
+BATCH_SIZE = 2048
 EMBEDDING_DIM = 100       # 词向量维度
 LEARNING_RATE = 1e-3      # 学习率
 
@@ -71,9 +71,6 @@ def data_split():
     # val_data.to_csv('data/dev.csv')
     # test_data.to_csv('data/test.csv')
 
-
-
-
 # 设置device
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # os.environ["CUDA_VISIBLE_DEVICES"] = "2"
@@ -95,8 +92,30 @@ def get_dataset(path,text_field,label_field):
         # print(label[i])
         examples.append(data.Example.fromlist([text[i], label[i]], fields=fields))
     return examples,fields
+
+def get_data(path,text_field,label_field):
+    fields = [('text', text_field), ('label', label_field)]  # torchtext文本配对关系
+    examples = []
+    print("path:",'data/'+path)
+    frame = pd.read_csv('data/'+path)
+
+    text = frame['text']
+    label = frame['label']
+    print("label:",len(label))
+    for i in range(len(text)):
+        examples.append(data.Example.fromlist([text[i], label[i]], fields=fields))
+    frame = pd.read_csv('data/test.csv')
+    text = frame['text']
+    label = frame['label']
+    for i in range(len(text)):
+        # print(text[i])
+        # print(text[i].split())
+        # print(label[i])
+        examples.append(data.Example.fromlist([text[i], label[i]], fields=fields))
+    print(len(examples))
+    return examples,fields
 # 得到构建Dataset所需的examples 和 fields
-train_examples, train_fileds = get_dataset('train.csv', TEXT, LABEL)
+train_examples, train_fileds = get_data('train.csv', TEXT, LABEL)
 dev_examples, dev_fields = get_dataset('dev.csv', TEXT, LABEL)
 test_examples, test_fields = get_dataset('test.csv', TEXT, LABEL)
 
@@ -105,8 +124,8 @@ train_data = data.Dataset(train_examples, train_fileds)
 dev_data = data.Dataset(dev_examples, dev_fields)
 test_data = data.Dataset(test_examples, test_fields)
 
-vectors = Vectors(name='vector/word2vec30.vector')
-TEXT.build_vocab(train_data, max_size=30, vectors=vectors)
+vectors = Vectors(name='vector/word2vec100.vector')
+TEXT.build_vocab(train_data, max_size=100, vectors=vectors)
 LABEL.build_vocab(train_data)
 # print(len(TEXT.vocab))
 # print(TEXT.vocab.itos)
